@@ -1,0 +1,355 @@
+<!Doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Schedule manager</title>
+  <link rel="stylesheet" href="budget.css">
+  <script type="module" src="bundle.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+</head>
+<img src="images/logo.png">
+<nav class="navigation">
+  <ul class="menu">
+    <li class="menu__item">
+      <a href="#" class="menu__link">
+        <span class="menu__title">
+          <span class="menu__first-word" data-hover="About">
+            About
+          </span>
+          <span class="menu__second-word" data-hover="Us">
+            Us
+          </span>
+        </span>
+      </a>
+    </li>
+
+    <li class="menu__item">
+      <a href="calender.html" class="menu__link">
+        <span class="menu__title">
+          <span class="menu__first-word" data-hover="Your">
+            Your
+          </span>
+          <span class="menu__second-word" data-hover="Calender">
+            Calender
+          </span>
+        </span>
+      </a>
+    </li>
+
+    <li class="menu__item">
+      <a href="todo-test-grids.html" class="menu__link">
+        <span class="menu__title">
+          <span class="menu__first-word" data-hover="To do">
+            To do
+          </span>
+          <span class="menu__second-word" data-hover="List">
+            List
+          </span>
+        </span>
+      </a>
+    </li>
+
+    <li class="menu__item">
+      <a href="budget.html" class="menu__link">
+        <span class="menu__title">
+          <span class="menu__first-word" data-hover="$">
+            $
+          </span>
+          <span class="menu__second-word" data-hover="Budget">
+            Budget
+          </span>
+        </span>
+      </a>
+    </li>
+
+    <li class="menu__item">
+      <a href="#" class="menu__link">
+        <span class="menu__title">
+          <span class="menu__first-word" data-hover="oh">
+            oh
+          </span>
+          <span class="menu__second-word" data-hover="ok">
+            ok
+          </span>
+        </span>
+      </a>
+    </li>
+
+    <li class="menu__item">
+      <a href="#" class="menu__link">
+        <span class="menu__title">
+          <span class="menu__first-word" class="toggle-btn" onclick="toggleDarkMode()" data-hover="🌃">
+            Dark
+          </span>
+          <span class="menu__second-word" class="toggle-btn" onclick="toggleDarkMode()" data-hover="🌕">
+            Mode
+          </span>
+        </span>
+      </a>
+    </li>
+    
+    <li class="menu__item">
+      <a href="#" class="menu__link">
+        <span class="menu__title">
+          <span class="menu__first-word" data-hover="oh">
+            <p id="welcome-message"></p>
+          </span>
+          <span class="menu__second-word" data-hover="ok">
+            <p id="welcome-message"></p>
+          </span>
+        </span>
+      </a>
+    </li>
+    <p id="welcome-message"></p>
+  </ul>
+
+  <body>
+    <div class="container">
+      <h1>Budget Section</h1>
+
+      <!-- Form for adding items -->
+      <form id="budget-form">
+        <div class="form-group">
+          <div class="input">
+            <input type="text" class="input-field" id="item" required>
+            <label class="input-label">Enter Item name</label>
+          </div>
+          <div class="input">
+            <input type="number" class="input-field" id="price" min="0" required>
+            <label class="input-label">Enter Item Price</label>
+          </div>
+          <button class="button1" type="submit" id="add"><span>Add Item</span></button>
+
+      </form>
+
+      <!-- Separate form for entering budget -->
+      <form id="Enter-budget">
+
+        <div class="input">
+          <input type="number" class="input-field" id="initial-budget" min="0" required>
+          <label class="input-label">Enter Your Budget</label>
+        </div>
+        <div class="budget-btn">
+          <button class="button1" type="submit" id="budget-button"><span>Add Budget</span></button>
+        </div>
+    </div>
+    </div>
+    </form>
+
+    <!-- Table to display budget items -->
+    <table id="budget-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="budget-body">
+        <!-- Budget items will be added here -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td class="total">Total Expense</td>
+          <td class="total" id="total-price"><span id="balance-amount">0</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="budget">Budget</td>
+          <td class="budget" id="total-budget">0</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="budget">balance</td>
+          <td class="budget" id="balance-amount">0</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="chart-container">
+      <canvas id="pie-chart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="line-chart"></canvas>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      // DOM Elements
+      const budgetForm = document.getElementById("budget-form");
+      const totalBudgetInput = document.getElementById("initial-budget");
+      const itemForm = document.getElementById("budget-form");
+      const itemNameInput = document.getElementById("item");
+      const itemPriceInput = document.getElementById("price");
+      const totalPriceElement = document.getElementById("total-price");
+      const balanceAmountElement = document.getElementById("balance-amount");
+      const budgetAmountElement = document.getElementById("total-budget");
+
+      let totalBudget = 0;
+
+      // Event listener for setting budget
+      document.getElementById("Enter-budget").addEventListener("submit", (event) => {
+        event.preventDefault(); // Prevent form submission
+
+        const newBudget = parseFloat(totalBudgetInput.value);
+
+        if (isNaN(newBudget) || newBudget <= 0) {
+          console.error("Invalid budget amount");
+          return;
+        }
+
+        totalBudget = newBudget;
+
+        // Update budget amount displayed
+        document.getElementById("total-budget").textContent = totalBudget;
+
+        // Update balance
+        const totalExpense = parseFloat(document.getElementById("total-price").textContent);
+        document.getElementById("balance-amount").textContent = totalBudget - totalExpense;
+
+
+        totalBudgetInput.value = ""; // Clear input field
+      });
+
+
+      // Event listener for adding items
+      budgetForm.addEventListener("submit", (event) => {
+        event.preventDefault(); // Prevent form submission
+
+        const itemName = document.getElementById("item").value;
+        const itemPrice = parseFloat(document.getElementById("price").value);
+
+        if (!itemName || isNaN(itemPrice) || itemPrice <= 0) {
+          console.error("Both item name and valid price are required");
+          return;
+        }
+        itemPriceInput.value = ""; // Clear input field
+        itemNameInput.value = "";
+        // Add item to table
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `<td>${itemName}</td><td>${itemPrice}</td><td></td>`;
+        document.getElementById("budget-body").appendChild(newRow);
+
+        // Update total expense
+        const currentTotalExpense = parseFloat(document.getElementById("total-price").textContent);
+        const newTotalExpense = currentTotalExpense + itemPrice;
+        document.getElementById("total-price").textContent = newTotalExpense;
+
+        // Update balance
+        document.getElementById("balance-amount").textContent = totalBudget - newTotalExpense;
+
+        // Clear input fields
+        document.getElementById("item").value = "";
+        document.getElementById("price").value = "";
+      });
+
+      // Function to add item to table
+      // Inside listCreator function, add icons for edit and delete actions
+      const listCreator = (itemName, itemPrice) => {
+        const newRow = document.createElement("tr");
+
+        const itemNameCell = document.createElement("td");
+        itemNameCell.textContent = itemName;
+
+        const itemPriceCell = document.createElement("td");
+        itemPriceCell.textContent = itemPrice;
+
+        const actionCell = document.createElement("td");
+        const editIcon = document.createElement("i");
+        editIcon.className = "far fa-edit edit-icon"; // Utilizing Font Awesome icons
+        editIcon.addEventListener("click", () => editItem(newRow));
+
+        const deleteIcon = document.createElement("i");
+        deleteIcon.className = "far fa-trash-alt delete-icon"; // Utilizing Font Awesome icons
+        deleteIcon.addEventListener("click", () => deleteItem(newRow));
+
+        actionCell.appendChild(editIcon);
+        actionCell.appendChild(deleteIcon);
+
+        newRow.appendChild(itemNameCell);
+        newRow.appendChild(itemPriceCell);
+        newRow.appendChild(actionCell);
+
+        document.getElementById("budget-body").appendChild(newRow);
+      };
+
+      // Function to handle edit action
+      const editItem = (row) => {
+        // Implement edit functionality here
+      };
+
+      // Function to handle delete action
+      const deleteItem = (row) => {
+        row.remove(); // Remove the row from the table
+        updateTotalExpense(); // Update total expense after deletion
+      };
+
+      // Function to update total expense after item deletion
+      const updateTotalExpense = () => {
+        let totalExpense = 0;
+        document.querySelectorAll("#budget-body tr").forEach(row => {
+          totalExpense += parseFloat(row.cells[1].textContent);
+        });
+        document.getElementById("total-price").textContent = totalExpense;
+        updateBalance();
+      };
+//function to create charts
+
+    </script>
+
+    <!-- Add Firebase scripts before your custom script -->
+<!--
+  <script type="module">
+     import { initializeApp} from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
+    import { getDatabase, ref, push, set, update } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+    import { Timestamp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCeauEJfELASw3MjMEq6btYa2Y7pqvO8vE",
+        authDomain: "schedule-manager-16145.firebaseapp.com",
+        projectId: "schedule-manager-16145",
+        storageBucket: "schedule-manager-16145.appspot.com",
+        messagingSenderId: "889921878488",
+        appId: "1:889921878488:web:975b869e20d8ba0be35aad",
+        measurementId: "G-3RS9SBB4B2"
+      };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  
+    // Get a reference to the Firebase database
+    const database = getDatabase(app);
+
+    // Get the current date and time
+    const currentDate = new Date();
+    // Format the date as a Firestore timestamp
+    const timestamp = Timestamp.fromDate(currentDate);
+    budgetForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // Prevent form submission
+
+    const itemName = document.getElementById("item").value;
+    const itemPrice = parseFloat(document.getElementById("price").value);
+
+    if (!itemName || isNaN(itemPrice) || itemPrice <= 0) {
+        console.log("Both item name and valid price are required");
+        return;
+    }
+
+    // Push data to Firebase
+    database.ref('items').push({
+        itemName: itemName,
+        itemPrice: itemPrice,
+        dateAdded: new Date().toISOString(),
+        budget: totalBudget
+    });
+  });
+</script>
+
+  </body>

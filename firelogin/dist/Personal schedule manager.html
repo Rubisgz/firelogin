@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Schedule manager</title>
+    <link rel="stylesheet" href="stytle.css">
+    <script src="bundle.js"></script>
+</head>
+
+<body>
+    <header>
+        <img src="images/logo.png">
+    </header>
+    <div class="one">
+        <div class="form-box">
+            <div class="button-box">
+                <div id="btn"></div>
+                <button type="button" class="toggle-btn" onclick="login()">Log In</button>
+                <button type="button" class="toggle-btn" onclick="Register()">Register</button>
+            </div>
+            <div class="social-icons">
+                <img src="images/logo-facebook.svg">
+                <img src="images/logo-google.svg" id="google-btn" >
+                <img src="images/logo-twitter.svg">
+            </div>
+            <form id="loginForm" class="input-group">
+                <input type="text" id="loginEmail" class="input-field" placeholder="Email Address" required>
+                <input type="password" id="loginPassword" class="input-field" placeholder="Enter password" required>
+                <input type="checkbox" class="check-box"><span>Remember Password</span>
+                <button type="button" class="submit-btn" >Log In</button>
+            </form>
+            <form id="registerForm" class="input-group">
+                <input type="text" id="registerUsername" class="input-field" placeholder="Enter username" required>
+                <input type="email" id="registerEmail" class="input-field" placeholder="Email Address" required>
+                <input type="password" id="registerPassword" class="input-field" placeholder="Enter password" required>
+                <input type="checkbox" class="check-box" id="acceptTerms"><label for="acceptTerms">I accept</label>
+                <button type="button" class="submit-btn" id="submit-register" >Register</button>
+
+            </form>
+        </div>
+    </div>
+    <script>
+        var x = document.getElementById("loginForm");
+        var y = document.getElementById("registerForm");
+        var z = document.getElementById("btn");
+
+        function Register() {
+            x.style.left = "-400px";
+            y.style.left = "50px";
+            z.style.left = "110px";
+        }
+
+        function login() {
+            x.style.left = "50px";
+            y.style.left = "450px";
+            z.style.left = "0px";
+        }
+    </script>
+</body>
+
+</html>
